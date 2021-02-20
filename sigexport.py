@@ -157,7 +157,7 @@ def fetch_data(db_file, key, manual=False, chat=None):
             f"ATTACH DATABASE '{db_file_decrypted}' AS plaintext KEY '';"
             f"SELECT sqlcipher_export('plaintext');"
             f"DETACH DATABASE plaintext;"
-            f'" | sqlcipher {db_file}'
+            f'" | /usr/local/opt/sqlcipher/bin/sqlcipher {db_file}'
         )
         os.system(command)
         db = sqlcipher.connect(str(db_file_decrypted))
