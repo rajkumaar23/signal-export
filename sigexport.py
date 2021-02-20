@@ -419,6 +419,12 @@ def merge_with_old(dest, old):
 )
 @click.option("--old", type=click.Path(), help="Path to previous export to merge with")
 @click.option(
+    "--media",
+    is_flag=True,
+    default=False,
+    help="Flag to export only media from chats",
+)
+@click.option(
     "--overwrite",
     "-o",
     is_flag=True,
@@ -433,7 +439,7 @@ def merge_with_old(dest, old):
     help="Whether to manually decrypt the db",
 )
 def main(
-    dest, old=None, source=None, overwrite=False, manual=False, chat=None
+    dest, old=None, source=None, overwrite=False, manual=False, chat=None, media=False
 ):
     """
     Read the Signal directory and output attachments and chat files to DEST directory.
@@ -477,10 +483,12 @@ def main(
     convos, contacts = fetch_data(db_file, key, manual=manual, chat=chat)
     contacts = fix_names(contacts)
     convos = copy_attachments(src, dest, convos, contacts)
-    make_simple(dest, convos, contacts)
+    if not media:
+        make_simple(dest, convos, contacts)
     if old:
         merge_with_old(dest, Path(old))
-    create_html(dest)
+    if not media:
+        create_html(dest)
 
     print(f"\nDone! Files exported to {dest}.")
 
